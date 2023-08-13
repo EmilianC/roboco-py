@@ -1,2 +1,8 @@
-# roboco-py
-A thin python wrapper around Window's RoboCopy.
+# win-roboco-py
+A thin python wrapper around Window's Robocopy utility.
+
+This package is not intended to cover 100% of Robocopy's functionality.
+Instead, the focus of the package is allow you to easily take advantage of Robocopy's robustness for the most common operations.
+
+# Contributions
+Pull requests or issue tickets are very welcome and appreciated.
