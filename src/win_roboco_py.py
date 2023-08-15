@@ -3,21 +3,21 @@ from typing import List
 import subprocess
 import sys
 
-def _run_robocopy(command: List[str], num_retries: int = 10, verbose: bool = False, dry_run: bool = False, large_file: bool = False) -> int:
-    command.insert(0, 'robocopy')
-
-    # Retries and wait period
-    command.append(f"/r:{num_retries}")
-    command.append("/w:1")
+def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retries: int, verbose: bool, dry_run: bool, unbuffered_IO: bool, flags: List[str] = []) -> int:
+    assert num_retries >= 0
+    command = [
+        'robocopy', str(source_dir), str(destination_dir), file,
+        '/mt:8', f'/r:{num_retries}', '/w:1'
+    ]
+    command.extend(flags)
 
     if verbose:
         command.append("/v")
         command.append("/x")
     if dry_run:
         command.append("/l")
-    if large_file:
+    if unbuffered_IO:
         command.append("/j")
-        command.append("/mt:8")
 
     print(" ".join(command))
 
@@ -32,51 +32,70 @@ def _run_robocopy(command: List[str], num_retries: int = 10, verbose: bool = Fal
 
 
 #
-def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, large_file: bool = False) -> bool:
-    cmd = []
-    cmd.append(str(source_file.parents[0]))
-    cmd.append(str(destination_dir))
-    cmd.append(str(source_file.name))
-
-    result = _run_robocopy(cmd, num_retries, verbose, dry_run, large_file)
+def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
+    result = _run_robocopy(
+        source_dir=str(source_file.parents[0]),
+        destination_dir=str(destination_dir),
+        file=str(source_file.name),
+        num_retries=num_retries,
+        verbose=verbose,
+        dry_run=dry_run,
+        unbuffered_IO=unbuffered_IO
+    )
     return result < 8
 
 #
-def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, large_file: bool = False):
-    cmd = []
-    cmd.append(str(source_file.parents[0]))
-    cmd.append(str(destination_dir))
-    cmd.append(str(source_file.name))
-    cmd.append("/mov")
-
-    result = _run_robocopy(cmd, num_retries, verbose, dry_run, large_file)
+def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False):
+    result = _run_robocopy(
+        source_dir=str(source_file.parents[0]),
+        destination_dir=str(destination_dir),
+        file=str(source_file.name),
+        num_retries=num_retries,
+        verbose=verbose,
+        dry_run=dry_run,
+        unbuffered_IO=unbuffered_IO,
+        flags=['/mov']
+    )
     return result < 8
 
 #
-def copy_directory(source_dir: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, large_files: bool = False) -> bool:
-    cmd = []
-    cmd.append(str(source_dir))
-    cmd.append(str(destination_dir))
-
-    result = _run_robocopy(cmd, num_retries, verbose, dry_run, large_files)
+def copy_directory(source_dir: Path, destination_dir: Path, recursive: bool = True, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
+    result = _run_robocopy(
+        source_dir=str(source_dir),
+        destination_dir=str(destination_dir),
+        file='*',
+        num_retries=num_retries,
+        verbose=verbose,
+        dry_run=dry_run,
+        unbuffered_IO=unbuffered_IO,
+        flags=['/e'] if recursive else []
+    )
     return result < 8
 
 #
-def move_directory(source_dir: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, large_files: bool = False) -> bool:
-    cmd = []
-    cmd.append(str(source_dir))
-    cmd.append(str(destination_dir))
-    cmd.append("/move")
-
-    result = _run_robocopy(cmd, num_retries, verbose, dry_run, large_files)
+def move_directory(source_dir: Path, destination_dir: Path, recursive: bool = True, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
+    result = _run_robocopy(
+        source_dir=str(source_dir),
+        destination_dir=str(destination_dir),
+        file='*',
+        num_retries=num_retries,
+        verbose=verbose,
+        dry_run=dry_run,
+        unbuffered_IO=unbuffered_IO,
+        flags=['/move']
+    )
     return result < 8
 
 #
-def mirror_directory(source_dir: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, large_files: bool = False) -> bool:
-    cmd = []
-    cmd.append(str(source_dir))
-    cmd.append(str(destination_dir))
-    cmd.append("/mir")
-
-    result = _run_robocopy(cmd, num_retries, verbose, dry_run, large_files)
+def mirror_directory(source_dir: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
+    result = _run_robocopy(
+        source_dir=str(source_dir),
+        destination_dir=str(destination_dir),
+        file='*',
+        num_retries=num_retries,
+        verbose=verbose,
+        dry_run=dry_run,
+        unbuffered_IO=unbuffered_IO,
+        flags=['/mir']
+    )
     return result < 8
