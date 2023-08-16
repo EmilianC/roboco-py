@@ -12,21 +12,22 @@ def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retrie
     command.extend(flags)
 
     if verbose:
-        command.append("/v")
-        command.append("/x")
+        command.append('/v')
+        command.append('/x')
     if dry_run:
-        command.append("/l")
+        command.append('/l')
     if unbuffered_IO:
-        command.append("/j")
+        command.append('/j')
 
     print(" ".join(command))
-
     with subprocess.Popen(command, text=True, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE) as process:
         for out in process.stdout:
             print(out)
 
         process.wait()
-        if process.returncode >= 8:
+        if process.returncode < 8:
+            print(f"robocopy succeeded with return code: {process.returncode}")
+        else:
             print(f"robocopy returned error code: {process.returncode}", file=sys.stderr)
 
         return process.returncode
@@ -35,7 +36,6 @@ def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retrie
 #
 def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_file.is_file()
-    assert destination_dir.is_dir()
 
     result = _run_robocopy(
         source_dir=str(source_file.parent),
@@ -51,7 +51,6 @@ def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, v
 #
 def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False):
     assert source_file.is_file()
-    assert destination_dir.is_dir()
 
     result = _run_robocopy(
         source_dir=str(source_file.parent),
@@ -68,7 +67,6 @@ def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, v
 #
 def copy_directory(source_dir: Path, destination_dir: Path, recursive: bool = True, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
-    assert destination_dir.is_dir()
 
     result = _run_robocopy(
         source_dir=str(source_dir),
@@ -85,7 +83,6 @@ def copy_directory(source_dir: Path, destination_dir: Path, recursive: bool = Tr
 #
 def move_directory(source_dir: Path, destination_dir: Path, recursive: bool = True, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
-    assert destination_dir.is_dir()
 
     result = _run_robocopy(
         source_dir=str(source_dir),
@@ -95,14 +92,13 @@ def move_directory(source_dir: Path, destination_dir: Path, recursive: bool = Tr
         verbose=verbose,
         dry_run=dry_run,
         unbuffered_IO=unbuffered_IO,
-        flags=['/move']
+        flags=['/move', '/e'] if recursive else ['/move']
     )
     return result < 8
 
 #
 def mirror_directory(source_dir: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
-    assert destination_dir.is_dir()
 
     result = _run_robocopy(
         source_dir=str(source_dir),
@@ -112,6 +108,6 @@ def mirror_directory(source_dir: Path, destination_dir: Path, num_retries: int =
         verbose=verbose,
         dry_run=dry_run,
         unbuffered_IO=unbuffered_IO,
-        flags=['/mir']
+        flags=['/mir', '/im']
     )
     return result < 8
