@@ -11,15 +11,18 @@ def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retrie
     ]
     command.extend(flags)
 
-    if verbose:
-        command.append('/v')
-        command.append('/x')
     if dry_run:
         command.append('/l')
     if unbuffered_IO:
         command.append('/j')
+    if verbose:
+        command.append('/v')
+        command.append('/x')
+        print(" ".join(command))
+    else:
+        command.append('/njh')
+        command.append('/njs')
 
-    print(" ".join(command))
     with subprocess.Popen(command, text=True, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE) as process:
         for out in process.stdout:
             print(out)
