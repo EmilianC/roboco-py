@@ -25,7 +25,7 @@ def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retrie
 
     with subprocess.Popen(command, text=True, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE) as process:
         for out in process.stdout:
-            print(out)
+            print(out, end='')
 
         process.wait()
         if process.returncode < 8:
