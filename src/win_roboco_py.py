@@ -35,7 +35,7 @@ def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retrie
         return process.returncode
 
 
-#
+# Copies the file to the destination, with the same filename.
 def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_file.is_file()
 
@@ -50,7 +50,8 @@ def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, v
     )
     return result < 8
 
-#
+
+# Copies the file to the destination, then deletes the source file.
 def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_file.is_file()
 
@@ -66,7 +67,8 @@ def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, v
     )
     return result < 8
 
-#
+
+# Copies all files to the destination.
 def copy_directory(source_dir: Path, destination_dir: Path, recursive: bool = True, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
 
@@ -82,7 +84,8 @@ def copy_directory(source_dir: Path, destination_dir: Path, recursive: bool = Tr
     )
     return result < 8
 
-#
+
+# Copies all files to the destination, then deletes the sources.
 def move_directory(source_dir: Path, destination_dir: Path, recursive: bool = True, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
 
@@ -98,7 +101,8 @@ def move_directory(source_dir: Path, destination_dir: Path, recursive: bool = Tr
     )
     return result < 8
 
-#
+
+# Copies all files to the destination, and deletes extra files.
 def mirror_directory(source_dir: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
 
