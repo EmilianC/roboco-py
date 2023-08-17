@@ -1,9 +1,8 @@
 from pathlib import Path
-from typing import List
 import subprocess
 import sys
 
-def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retries: int, verbose: bool, dry_run: bool, unbuffered_IO: bool, flags: List[str] = []) -> int:
+def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retries: int, verbose: bool, dry_run: bool, unbuffered_IO: bool, flags: list = []) -> int:
     assert num_retries >= 0
     command = [
         'robocopy', str(source_dir), str(destination_dir), file,
@@ -11,18 +10,21 @@ def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retrie
     ]
     command.extend(flags)
 
-    if verbose:
-        command.append('/v')
-        command.append('/x')
     if dry_run:
         command.append('/l')
     if unbuffered_IO:
         command.append('/j')
+    if verbose:
+        command.append('/v')
+        command.append('/x')
+        print(" ".join(command))
+    else:
+        command.append('/njh')
+        command.append('/njs')
 
-    print(" ".join(command))
     with subprocess.Popen(command, text=True, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE) as process:
         for out in process.stdout:
-            print(out)
+            print(out, end='')
 
         process.wait()
         if process.returncode < 8:
@@ -33,7 +35,7 @@ def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retrie
         return process.returncode
 
 
-#
+# Copies the file to the destination, with the same filename.
 def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_file.is_file()
 
@@ -48,8 +50,9 @@ def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, v
     )
     return result < 8
 
-#
-def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False):
+
+# Copies the file to the destination, then deletes the source file.
+def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_file.is_file()
 
     result = _run_robocopy(
@@ -64,7 +67,8 @@ def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, v
     )
     return result < 8
 
-#
+
+# Copies all files to the destination.
 def copy_directory(source_dir: Path, destination_dir: Path, recursive: bool = True, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
 
@@ -80,7 +84,8 @@ def copy_directory(source_dir: Path, destination_dir: Path, recursive: bool = Tr
     )
     return result < 8
 
-#
+
+# Copies all files to the destination, then deletes the sources.
 def move_directory(source_dir: Path, destination_dir: Path, recursive: bool = True, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
 
@@ -96,7 +101,8 @@ def move_directory(source_dir: Path, destination_dir: Path, recursive: bool = Tr
     )
     return result < 8
 
-#
+
+# Copies all files to the destination, and deletes extra files.
 def mirror_directory(source_dir: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_dir.is_dir()
 

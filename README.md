@@ -13,17 +13,17 @@ Pull requests or issue tickets are very welcome and appreciated.
 import win_roboco_py as robo
 
 # Copies the file to the destination, with the same filename.
-robo.copy_file(Path("./src/file.txt"), Path('./dst'))
+robo.copy_file(Path('./src/file.txt'), Path('./dst'))
 
 # Copies the file to the destination, then deletes the source file.
-robo.move_file(Path("./src/file.txt"), Path('./dst'))
+robo.move_file(Path('./src/file.txt'), Path('./dst'))
 
 # Copies all files to the destination.
-robo.copy_directory(Path("./src"), Path('./dst'), recursive=True)
+robo.copy_directory(Path('./src'), Path('./dst'), recursive=True)
 
 # Copies all files to the destination, then deletes the sources.
-robo.move_directory(Path("./src"), Path('./dst'), recursive=False)
+robo.move_directory(Path('./src'), Path('./dst'), recursive=False)
 
 # Copies all files to the destination, and deletes extra files.
-robo.mirror_directory(Path("./src"), Path('./dst'))
+robo.mirror_directory(Path('./src'), Path('./dst'))
 ```
