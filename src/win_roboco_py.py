@@ -49,7 +49,7 @@ def copy_file(source_file: Path, destination_dir: Path, num_retries: int = 10, v
     return result < 8
 
 #
-def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False):
+def move_file(source_file: Path, destination_dir: Path, num_retries: int = 10, verbose: bool = False, dry_run: bool = False, unbuffered_IO: bool = False) -> bool:
     assert source_file.is_file()
 
     result = _run_robocopy(
