@@ -1,3 +1,9 @@
+# 0.4.0 Beta (August 16th, 2023)
+
+- Fixed stdout pipe emitting extra newlines
+- Header and summary are now only shown in verbose mode
+- Minor consistency fixes and cleanup
+
 # 0.3.0 Alpha (August 16th, 2023)
 
 - Fixed destination asserts if the folder didn't exist yet
