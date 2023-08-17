@@ -1,9 +1,8 @@
 from pathlib import Path
-from typing import List
 import subprocess
 import sys
 
-def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retries: int, verbose: bool, dry_run: bool, unbuffered_IO: bool, flags: List[str] = []) -> int:
+def _run_robocopy(source_dir: Path, destination_dir: Path, file: str, num_retries: int, verbose: bool, dry_run: bool, unbuffered_IO: bool, flags: list = []) -> int:
     assert num_retries >= 0
     command = [
         'robocopy', str(source_dir), str(destination_dir), file,
