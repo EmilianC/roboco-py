@@ -1,6 +1,17 @@
 from pathlib import Path
 import subprocess
-import sys
+import logging
+
+
+# Removes the redundant empty lines from robocopy output.
+class NoNewLineFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.msg = record.msg.rstrip('\n')
+        return True
+
+logger = logging.getLogger(__name__)
+logger.addFilter(NoNewLineFilter())
+
 
 def _run_robocopy(
     source_dir: Path,
@@ -25,20 +36,20 @@ def _run_robocopy(
     if verbose:
         command.append('/v')
         command.append('/x')
-        print(" ".join(command))
+        logger.info(" ".join(command))
     else:
         command.append('/njh')
         command.append('/njs')
 
     with subprocess.Popen(command, text=True, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE) as process:
         for out in process.stdout:
-            print(out, end='')
+            logger.info(out)
 
         process.wait()
         if process.returncode < 8:
-            print(f"robocopy succeeded with return code: {process.returncode}")
+            logger.info(f"robocopy succeeded with return code: {process.returncode}")
         else:
-            print(f"robocopy returned error code: {process.returncode}", file=sys.stderr)
+            logger.error(f"robocopy returned error code: {process.returncode}")
 
         return process.returncode
 
