@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "win-roboco-py"
-version = "0.4.0"
+version = "0.5.0"
 authors = [ { name = "Emilian Cioca" } ]
 description = "A wrapper for Window's Robocopy utility."
 readme = "README.md"

@@ -1,3 +1,8 @@
+# 0.5.0 Beta (February 23rd, 2024)
+
+- Replaced print() usages with the more structured logging module
+- Minor cleanup
+
 # 0.4.0 Beta (August 16th, 2023)
 
 - Fixed stdout pipe emitting extra newlines
