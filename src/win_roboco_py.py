@@ -16,7 +16,8 @@ logger.addFilter(NoNewLineFilter())
 def _run_robocopy(
     source_dir: Path,
     destination_dir: Path,
-    file: str, num_retries: int,
+    file: str,
+    num_retries: int,
     verbose: bool,
     dry_run: bool,
     unbuffered_IO: bool,
